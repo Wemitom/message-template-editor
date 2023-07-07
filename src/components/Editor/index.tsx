@@ -2,7 +2,13 @@ import { ReactNode, createContext, useReducer, useState } from 'react';
 
 import styles from './Editor.module.css';
 import Inputs from './Inputs';
-import { Action, IProps, Template, TemplateContextInterface } from './types';
+import {
+  Action,
+  CursorPosition,
+  IProps,
+  Template,
+  TemplateContextInterface
+} from './types';
 
 const Variables = ({ children }: { children: ReactNode }) => {
   return (
@@ -14,6 +20,9 @@ const Variables = ({ children }: { children: ReactNode }) => {
 };
 
 const reducer = (state: Template, action: Action) => {
+  let firstPart = '',
+    secondPart = '';
+
   switch (action.type) {
     case 'CHANGE_VALUE':
       return state.map((input, i) => {
@@ -27,32 +36,47 @@ const reducer = (state: Template, action: Action) => {
         return input;
       });
     case 'ADD_IF_THEN_ELSE':
-      return state
-        .map((input, i) => {
-          if (i === action.payload) {
-            return {
-              ...input,
-              child: state.length
-            };
-          }
+      [firstPart, secondPart] = state[action.payload.id]
+        ? state[action.payload.id].value.split('').reduce(
+            ([first, second], letter, i) => {
+              if (i < action.payload.position) first += letter;
+              else second += letter;
 
-          return input;
-        })
-        .concat([
-          {
-            type: 'if',
-            value: '',
-            chilren: [state.length + 1, state.length + 2]
-          },
-          {
-            type: 'then',
-            value: ''
-          },
-          {
-            type: 'else',
-            value: ''
-          }
-        ]);
+              return [first, second];
+            },
+            ['', '']
+          )
+        : ['', ''];
+
+      return state[action.payload.id]
+        ? state
+            .map((input, i) => {
+              if (i === action.payload.id) {
+                return {
+                  ...input,
+                  value: firstPart,
+                  child: state.length
+                };
+              }
+
+              return input;
+            })
+            .concat([
+              {
+                type: 'if',
+                value: '',
+                chilren: [state.length + 1, state.length + 2]
+              },
+              {
+                type: 'then',
+                value: secondPart
+              },
+              {
+                type: 'else',
+                value: ''
+              }
+            ])
+        : state;
     case 'REMOVE_IF_THEN_ELSE':
       return state;
   }
@@ -76,12 +100,18 @@ export const TemplateContext = createContext<TemplateContextInterface>({
 });
 
 const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
-  const [lastPosition, setLastPosition] = useState(0);
+  const [lastPosition, setLastPosition] = useState<CursorPosition>({
+    id: 0,
+    position: 0
+  });
   const [state, dispatch] = useReducer(reducer, template ?? initTemplate);
   const changeValue = (id: number, value: string) =>
     dispatch({ type: 'CHANGE_VALUE', payload: { id, value } });
-  const addIfThenElse = (id: number) =>
-    dispatch({ type: 'ADD_IF_THEN_ELSE', payload: id });
+  const addIfThenElse = (id: number, position: number) =>
+    dispatch({
+      type: 'ADD_IF_THEN_ELSE',
+      payload: { id, position }
+    });
   const removeIfThenElse = (id: number) =>
     dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: id });
 
@@ -95,14 +125,21 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
             className={styles.variable}
             key={name}
             role="button"
-            onClick={() =>
-              changeValue(
-                lastPosition,
-                `${
-                  state[lastPosition].value && state[lastPosition].value + ' '
-                }{${name}}`
-              )
-            }
+            onClick={() => {
+              const newValue = state[lastPosition.id].value.split('');
+              newValue.splice(
+                lastPosition.position,
+                0,
+                `${lastPosition.position !== 0 ? ' ' : ''}{${name}}${
+                  lastPosition.position !== state[lastPosition.id].value.length
+                    ? ' '
+                    : ''
+                }`
+              );
+
+              // Вставляем переменную в инпут на основе последнего положения курсора
+              changeValue(lastPosition.id, newValue.join(''));
+            }}
             tabIndex={0}
           >{`{${name}}`}</li>
         ))}
@@ -110,7 +147,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
 
       <button
         className={styles.btnIfThenElse}
-        onClick={() => addIfThenElse(lastPosition)}
+        onClick={() => addIfThenElse(lastPosition.id, lastPosition.position)}
       >
         if | then | else
       </button>

@@ -37,11 +37,15 @@ interface ActionChange {
     value: string;
   };
 }
-interface ActionNormal {
-  type: 'ADD_IF_THEN_ELSE' | 'REMOVE_IF_THEN_ELSE';
+interface ActionAddIfThenElse {
+  type: 'ADD_IF_THEN_ELSE';
+  payload: CursorPosition;
+}
+interface ActionRemoveIfThenElse {
+  type: 'REMOVE_IF_THEN_ELSE';
   payload: number;
 }
-type Action = ActionChange | ActionNormal;
+type Action = ActionChange | ActionAddIfThenElse | ActionRemoveIfThenElse;
 
 interface IProps {
   /**
@@ -61,9 +65,21 @@ interface IProps {
 interface TemplateContextInterface {
   template: Template;
   changeValue: (id: number, value: string) => void;
-  addIfThenElse: (id: number) => void;
+  addIfThenElse: (id: number, position: number) => void;
   removeIfThenElse: (id: number) => void;
-  setLastPosition: (id: number) => void;
+  setLastPosition: ({ id, position }: CursorPosition) => void;
 }
 
-export type { NormalInput, IProps, Template, Action, TemplateContextInterface };
+interface CursorPosition {
+  id: number;
+  position: number;
+}
+
+export type {
+  Input,
+  IProps,
+  Template,
+  Action,
+  TemplateContextInterface,
+  CursorPosition
+};

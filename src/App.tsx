@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import styles from './App.module.css';
-import Editor from './Editor';
+import Editor from './components/Editor';
 
 /**
  * Основной компонент, который вызывается при запуске приложения. Производит рендер компонента Editor,

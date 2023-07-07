@@ -58,4 +58,12 @@ interface IProps {
   callbackSave: (template: Template) => Promise<void>;
 }
 
-export type { IProps, Template, Action };
+interface TemplateContextInterface {
+  template: Template;
+  changeValue: (id: number, value: string) => void;
+  addIfThenElse: (id: number) => void;
+  removeIfThenElse: (id: number) => void;
+  setLastPosition: (id: number) => void;
+}
+
+export type { NormalInput, IProps, Template, Action, TemplateContextInterface };

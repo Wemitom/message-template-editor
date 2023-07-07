@@ -1,7 +1,8 @@
-import { ReactNode, useReducer } from 'react';
+import { ReactNode, createContext, useReducer, useState } from 'react';
 
 import styles from './Editor.module.css';
-import { Action, IProps, Template } from './types';
+import Inputs from './Inputs';
+import { Action, IProps, Template, TemplateContextInterface } from './types';
 
 const Variables = ({ children }: { children: ReactNode }) => {
   return (
@@ -56,11 +57,33 @@ const reducer = (state: Template, action: Action) => {
       return state;
   }
 };
-
 const initTemplate: Template = [{ type: 'normal', value: '' }];
 
+export const TemplateContext = createContext<TemplateContextInterface>({
+  template: initTemplate,
+  addIfThenElse: () => {
+    return;
+  },
+  removeIfThenElse: () => {
+    return;
+  },
+  changeValue: () => {
+    return;
+  },
+  setLastPosition: () => {
+    return;
+  }
+});
+
 const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
+  const [lastPosition, setLastPosition] = useState(0);
   const [state, dispatch] = useReducer(reducer, template ?? initTemplate);
+  const changeValue = (id: number, value: string) =>
+    dispatch({ type: 'CHANGE_VALUE', payload: { id, value } });
+  const addIfThenElse = (id: number) =>
+    dispatch({ type: 'ADD_IF_THEN_ELSE', payload: id });
+  const removeIfThenElse = (id: number) =>
+    dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: id });
 
   return (
     <div className={styles.container}>
@@ -72,12 +95,37 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
             className={styles.variable}
             key={name}
             role="button"
+            onClick={() =>
+              changeValue(
+                lastPosition,
+                `${
+                  state[lastPosition].value && state[lastPosition].value + ' '
+                }{${name}}`
+              )
+            }
             tabIndex={0}
           >{`{${name}}`}</li>
         ))}
       </Variables>
 
-      <button className={styles.btnIfThenElse}>if | then | else</button>
+      <button
+        className={styles.btnIfThenElse}
+        onClick={() => addIfThenElse(lastPosition)}
+      >
+        if | then | else
+      </button>
+
+      <TemplateContext.Provider
+        value={{
+          template: state,
+          changeValue,
+          addIfThenElse,
+          removeIfThenElse,
+          setLastPosition
+        }}
+      >
+        <Inputs />
+      </TemplateContext.Provider>
     </div>
   );
 };

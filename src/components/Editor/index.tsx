@@ -6,9 +6,12 @@ import {
   Action,
   CursorPosition,
   IProps,
-  Template,
+  IfInput,
+  Input,
+  OtherInput,
   TemplateContextInterface
 } from './types';
+import { changeNode, generateUID } from '../../utils/functions';
 
 const Variables = ({ children }: { children: ReactNode }) => {
   return (
@@ -19,69 +22,72 @@ const Variables = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const reducer = (state: Template, action: Action) => {
+const reducer = (state: OtherInput, action: Action) => {
   let firstPart = '',
-    secondPart = '';
+    secondPart = '',
+    otherElement: OtherInput;
+  const thenElement: OtherInput = {
+    type: 'then',
+    value: '',
+    uid: generateUID()
+  };
+  const elseElement: OtherInput = {
+    type: 'else',
+    value: '',
+    uid: generateUID()
+  };
+  const ifElement: IfInput = {
+    type: 'if',
+    value: '',
+    uid: generateUID(),
+    children: [thenElement, elseElement]
+  };
 
   switch (action.type) {
     case 'CHANGE_VALUE':
-      return state.map((input, i) => {
-        if (i === action.payload.id) {
-          return {
-            ...input,
-            value: action.payload.value
-          };
-        }
-
-        return input;
-      });
+      // Так как на вход подаем state, являющейся корнем дерева, то на выход получим корень
+      return changeNode(
+        state,
+        action.payload.uid,
+        action.payload.value
+      ) as OtherInput;
     case 'ADD_IF_THEN_ELSE':
-      [firstPart, secondPart] = state[action.payload.id]
-        ? state[action.payload.id].value.split('').reduce(
-            ([first, second], letter, i) => {
-              if (i < action.payload.position) first += letter;
-              else second += letter;
+      if (action.payload.input.type === 'if') return state;
 
-              return [first, second];
-            },
-            ['', '']
-          )
-        : ['', ''];
+      [firstPart, secondPart] = action.payload.input.value.split('').reduce(
+        ([first, second], letter, i) => {
+          if (i < action.payload.position) first += letter;
+          else second += letter;
 
-      return state[action.payload.id]
-        ? state
-            .map((input, i) => {
-              if (i === action.payload.id) {
-                return {
-                  ...input,
-                  value: firstPart,
-                  child: state.length
-                };
-              }
+          return [first, second];
+        },
+        ['', '']
+      );
 
-              return input;
-            })
-            .concat([
-              {
-                type: 'if',
-                value: '',
-                chilren: [state.length + 1, state.length + 2]
-              },
-              {
-                type: 'then',
-                value: secondPart
-              },
-              {
-                type: 'else',
-                value: ''
-              }
-            ])
-        : state;
+      otherElement = {
+        type: action.payload.input.type,
+        value: secondPart,
+        uid: generateUID()
+      };
+
+      return changeNode(
+        changeNode(state, action.payload.input.uid, firstPart, [
+          ifElement,
+          otherElement
+        ]) as OtherInput,
+        ifElement.uid,
+        undefined,
+        [thenElement, elseElement]
+      ) as OtherInput;
     case 'REMOVE_IF_THEN_ELSE':
       return state;
   }
 };
-const initTemplate: Template = [{ type: 'normal', value: '' }];
+const initTemplate: OtherInput = {
+  type: 'normal',
+  value: '',
+  uid: generateUID()
+};
 
 export const TemplateContext = createContext<TemplateContextInterface>({
   template: initTemplate,
@@ -101,19 +107,22 @@ export const TemplateContext = createContext<TemplateContextInterface>({
 
 const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
   const [lastPosition, setLastPosition] = useState<CursorPosition>({
-    id: 0,
+    input: template ?? initTemplate,
     position: 0
   });
-  const [state, dispatch] = useReducer(reducer, template ?? initTemplate);
-  const changeValue = (id: number, value: string) =>
-    dispatch({ type: 'CHANGE_VALUE', payload: { id, value } });
-  const addIfThenElse = (id: number, position: number) =>
+  const [state, dispatch] = useReducer(
+    reducer,
+    (template as OtherInput) ?? initTemplate
+  );
+  const changeValue = (input: Input, uid: string, value: string) =>
+    dispatch({ type: 'CHANGE_VALUE', payload: { input, uid, value } });
+  const addIfThenElse = (input: Input, position: number) =>
     dispatch({
       type: 'ADD_IF_THEN_ELSE',
-      payload: { id, position }
+      payload: { input, position }
     });
-  const removeIfThenElse = (id: number) =>
-    dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: id });
+  const removeIfThenElse = (input: Input) =>
+    dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: input });
 
   return (
     <div className={styles.container}>
@@ -126,19 +135,23 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
             key={name}
             role="button"
             onClick={() => {
-              const newValue = state[lastPosition.id].value.split('');
+              const newValue = lastPosition.input.value.split('');
               newValue.splice(
                 lastPosition.position,
                 0,
                 `${lastPosition.position !== 0 ? ' ' : ''}{${name}}${
-                  lastPosition.position !== state[lastPosition.id].value.length
+                  lastPosition.position !== lastPosition.input.value.length
                     ? ' '
                     : ''
                 }`
               );
 
               // Вставляем переменную в инпут на основе последнего положения курсора
-              changeValue(lastPosition.id, newValue.join(''));
+              changeValue(
+                lastPosition.input,
+                lastPosition.input.uid,
+                newValue.join('')
+              );
             }}
             tabIndex={0}
           >{`{${name}}`}</li>
@@ -147,7 +160,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
 
       <button
         className={styles.btnIfThenElse}
-        onClick={() => addIfThenElse(lastPosition.id, lastPosition.position)}
+        onClick={() => addIfThenElse(lastPosition.input, lastPosition.position)}
       >
         if | then | else
       </button>

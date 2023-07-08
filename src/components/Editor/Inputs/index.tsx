@@ -19,26 +19,34 @@ const Inputs = () => {
    * @param {boolean} ifThenElse - Необязательный. Указывает, нужно ли рендерить компонент if-then-else.
    * @return {JSX.Element} Компонент, представляющий поле для ввода.
    */
-  const getInputs = (i: number, input: Input, ifThenElse?: boolean) => {
-    const component = (
+  const getInputs = (input: Input) => {
+    const component: JSX.Element = (
       <>
         {input.type !== 'normal' && <span>{input.type}</span>}
         <TextareaAutosize
           className={styles.textarea}
           value={input.value}
-          onChange={(e) => changeValue(i, e.target.value)}
+          onChange={(e) => changeValue(input, input.uid, e.target.value)}
           onClick={(e) =>
-            setLastPosition({ id: i, position: e.currentTarget.selectionStart })
+            setLastPosition({
+              input: input,
+              position: e.currentTarget.selectionStart
+            })
           }
           onKeyUp={(e) =>
-            setLastPosition({ id: i, position: e.currentTarget.selectionStart })
+            setLastPosition({
+              input: input,
+              position: e.currentTarget.selectionStart
+            })
           }
         />
-        {ifThenElse &&
-          input.type !== 'if' &&
-          input.child &&
+        {input.type !== 'if' && input.children && (
           /* Если у этого инпута есть дочерние инпуты, то рекурсивно рендерим их */
-          renderIfThenElse(input.child)}
+          <>
+            {renderIfThenElse(input.children[0])}
+            {getInputs(input.children[1])}
+          </>
+        )}
       </>
     );
 
@@ -55,20 +63,15 @@ const Inputs = () => {
    * @param {number} i - Индекс if инпута.
    * @return {JSX.Element} Зарендеренный компонент.
    */
-  const renderIfThenElse = (i: number): JSX.Element => {
-    const ifInput = template[i];
+  const renderIfThenElse = (input: Input): JSX.Element => {
     // Если этот инпут является if-инпутом, то рендерит его.
-    if (ifInput.type === 'if') {
+    if (input.type === 'if') {
       return (
-        <div className={styles.ifThenElse} style={{ marginLeft: '10rem' }}>
-          {getInputs(i, ifInput)}
-          {ifInput.chilren.map((id) => {
-            const element = template[id];
-
-            return element.type === 'then' || element.type === 'else' ? (
-              <div key={`if_${i}_${element.type}`}>
-                {getInputs(id, element, true)}
-              </div>
+        <div className={styles.ifThenElse}>
+          {getInputs(input)}
+          {input.children.map((inp, i) => {
+            return inp.type === 'then' || inp.type === 'else' ? (
+              <div key={`if_${i}_${inp.type}`}>{getInputs(inp)}</div>
             ) : (
               <></>
             );
@@ -82,7 +85,7 @@ const Inputs = () => {
   };
 
   // Возвращаем компонент, представляющий начальное поле для ввода.
-  return <div className={styles.inputs}>{getInputs(0, template[0], true)}</div>;
+  return <div className={styles.inputs}>{getInputs(template)}</div>;
 };
 
 export default Inputs;

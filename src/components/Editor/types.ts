@@ -1,39 +1,46 @@
-interface CommonInput {
+type InputTypes = 'normal' | 'if' | 'then' | 'else';
+
+interface InputBase {
+  /**
+   * Тип поля
+   */
+  type: InputTypes;
   /**
    * Значение поля
    */
   value: string;
   /**
-   * Поле If относящееся к данному инпуту
+   * ID поля
    */
-  child?: number;
+  uid: string;
 }
 
-interface NormalInput extends CommonInput {
-  type: 'normal';
-}
-
-interface IfInput extends Omit<CommonInput, 'child'> {
+/**
+ * If поле для ввода. Наследуется от InputBase с надобностью задания дочерних полей
+ */
+interface IfInput extends InputBase {
   type: 'if';
-  chilren: [number, number];
+  /**
+   *  Дочерние поля - then и else
+   */
+  children: [OtherInput, OtherInput];
 }
 
-interface ThenInput extends CommonInput {
-  type: 'then';
+interface OtherInput extends InputBase {
+  type: 'normal' | 'then' | 'else';
+  /**
+   * Необязательный. Дочерние поля - if и другая часть
+   */
+  children?: [IfInput, OtherInput];
 }
 
-interface ElseInput extends CommonInput {
-  type: 'else';
-}
-
-type Input = NormalInput | IfInput | ElseInput | ThenInput;
-
-type Template = Input[];
+type Input = IfInput | OtherInput;
 
 interface ActionChange {
   type: 'CHANGE_VALUE';
   payload: {
-    id: number;
+    input: Input;
+    uid: string;
     value: string;
   };
 }
@@ -43,7 +50,7 @@ interface ActionAddIfThenElse {
 }
 interface ActionRemoveIfThenElse {
   type: 'REMOVE_IF_THEN_ELSE';
-  payload: number;
+  payload: Input;
 }
 type Action = ActionChange | ActionAddIfThenElse | ActionRemoveIfThenElse;
 
@@ -55,30 +62,31 @@ interface IProps {
   /**
    * Шаблон
    */
-  template?: Template;
+  template?: Input;
   /**
    * Обработчик сохранения шаблона
    */
-  callbackSave: (template: Template) => Promise<void>;
+  callbackSave: (template: Input) => Promise<void>;
 }
 
 interface TemplateContextInterface {
-  template: Template;
-  changeValue: (id: number, value: string) => void;
-  addIfThenElse: (id: number, position: number) => void;
-  removeIfThenElse: (id: number) => void;
-  setLastPosition: ({ id, position }: CursorPosition) => void;
+  template: Input;
+  changeValue: (input: Input, uid: string, value: string) => void;
+  addIfThenElse: (input: Input, position: number) => void;
+  removeIfThenElse: (input: Input) => void;
+  setLastPosition: ({ input, position }: CursorPosition) => void;
 }
 
 interface CursorPosition {
-  id: number;
+  input: Input;
   position: number;
 }
 
 export type {
   Input,
+  OtherInput,
+  IfInput,
   IProps,
-  Template,
   Action,
   TemplateContextInterface,
   CursorPosition

@@ -52,7 +52,8 @@ describe('getStringFromTemplate', () => {
     const valuesTrue: Record<string, string> = {
       name: 'Tom',
       timeOfDay: 'day',
-      var1: 'var'
+      var1: 'var',
+      var2: ''
     };
     const resultTrue = getStringFromTemplate(template, valuesTrue);
     expect(resultTrue).toEqual(
@@ -61,7 +62,9 @@ describe('getStringFromTemplate', () => {
 
     const values2: Record<string, string> = {
       name: 'Alice',
-      timeOfDay: 'evening'
+      timeOfDay: 'evening',
+      var1: '',
+      var2: ''
     };
     const result2 = getStringFromTemplate(template, values2);
     expect(result2).toEqual(
@@ -136,7 +139,8 @@ describe('getStringFromTemplate', () => {
 
     const values2: Record<string, string> = {
       name: 'Bob',
-      var1: 'a'
+      var1: 'a',
+      var2: ''
     };
     const result2 = getStringFromTemplate(template, values2);
     expect(result2).toEqual(
@@ -144,7 +148,9 @@ describe('getStringFromTemplate', () => {
     );
 
     const values3: Record<string, string> = {
-      name: 'Charlie'
+      name: 'Charlie',
+      var1: '',
+      var2: ''
     };
     const result3 = getStringFromTemplate(template, values3);
     expect(result3).toEqual(

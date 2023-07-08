@@ -24,6 +24,13 @@ const Variables = ({ children }: { children: ReactNode }) => {
   );
 };
 
+/**
+ * Редюсер, который обновляет состояние на основе заданного действия.
+ *
+ * @param {OtherInput} state - Текущее состояние.
+ * @param {Action} action - Выполняемое действие.
+ * @return {OtherInput} Обновленное состояние.
+ */
 const reducer = (state: OtherInput, action: Action) => {
   let firstPart = '',
     secondPart = '',
@@ -48,15 +55,21 @@ const reducer = (state: OtherInput, action: Action) => {
 
   switch (action.type) {
     case 'CHANGE_VALUE':
-      // Так как на вход подаем state, являющейся корнем дерева, то на выход получим корень
+      /**
+       * Так как на вход подаем state, являющейся корнем дерева, то на выход получим корень
+       */
       return changeNode(
         state,
         action.payload.uid,
         action.payload.value
       ) as OtherInput;
     case 'ADD_IF_THEN_ELSE':
+      // Если узел типа 'if', возвращаем корень дерева, без изменения
       if (action.payload.input.type === 'if') return state;
 
+      /**
+       * Разбиваем строку по последнему положению курсора
+       */
       [firstPart, secondPart] = action.payload.input.value.split('').reduce(
         ([first, second], letter, i) => {
           if (i < action.payload.position) first += letter;
@@ -82,6 +95,9 @@ const reducer = (state: OtherInput, action: Action) => {
         };
       }
 
+      /**
+       *  Возвращаем корень дерева, где для выбранного узла вставлены дочерние узлы if-then-else
+       */
       return changeNode(
         changeNode(
           state,
@@ -95,7 +111,6 @@ const reducer = (state: OtherInput, action: Action) => {
         [thenElement, elseElement],
         true
       ) as OtherInput;
-    // TODO make so values get merged on delete
     case 'REMOVE_IF_THEN_ELSE':
       parent = getNode(state, {
         child: action.payload
@@ -105,8 +120,8 @@ const reducer = (state: OtherInput, action: Action) => {
       return changeNode(
         state,
         parent.uid,
-        undefined,
-        undefined,
+        parent.value + parent.children?.[1].value,
+        parent.children?.[1].children, // Ставим дочерними узлами узлы другой части
         true
       ) as OtherInput;
   }
@@ -133,6 +148,9 @@ export const TemplateContext = createContext<TemplateContextInterface>({
   }
 });
 
+/**
+ * Рендерит компонент Editor, который представляет собой редактор шаблона сообщения.
+ */
 const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
   const [lastPosition, setLastPosition] = useState<CursorPosition>({
     input: template ?? initTemplate,
@@ -173,7 +191,9 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
                 }`
               );
 
-              // Вставляем переменную в инпут на основе последнего положения курсора
+              /**
+               * Вставляем переменную в инпут на основе последнего положения курсора
+               */
               changeValue(
                 lastPosition.input,
                 lastPosition.input.uid,
@@ -190,6 +210,9 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
           className={styles.btnIfThenElse}
           onClick={() => {
             addIfThenElse(lastPosition.input, lastPosition.position);
+            /**
+             * Обновляем последнюю позицию курсора, т.к. строка могла быть изменена
+             */
             setLastPosition({
               input: lastPosition.input,
               position: lastPosition.input.value.length

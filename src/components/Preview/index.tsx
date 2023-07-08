@@ -15,10 +15,14 @@ const Variables = ({ children }: { children: ReactNode }) => {
   );
 };
 
+/**
+ * Рендерит компонент предпросмотра на основе предоставленного массива имен переменных и шаблона.
+ */
+
 const Preview = ({ arrVarNames, template }: PreviewProps) => {
   const [values, setValues] = useState<
     Record<typeof arrVarNames[number], string>
-  >({});
+  >(arrVarNames.reduce((acc, name) => ({ ...acc, [name]: '' }), {}));
 
   return (
     <div>

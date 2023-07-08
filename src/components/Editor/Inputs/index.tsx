@@ -75,7 +75,9 @@ const Inputs = () => {
    * @return {JSX.Element} Зарендеренный компонент.
    */
   const renderIfThenElse = (input: Input): JSX.Element => {
-    // Если этот инпут является if-инпутом, то рендерит его.
+    /**
+     *  Если этот инпут является if-инпутом, то рендерит его.
+     */
     if (input.type === 'if') {
       return (
         <div className={styles.ifThenElse}>
@@ -90,12 +92,16 @@ const Inputs = () => {
         </div>
       );
     } else {
-      // Иначе, рендерим заглушку
+      /**
+       *  Иначе, рендерим заглушку
+       */
       return <></>;
     }
   };
 
-  // Возвращаем компонент, представляющий начальное поле для ввода.
+  /**
+   * Начинаем рендер с корня дерева
+   */
   return <div className={styles.inputs}>{getInputs(template)}</div>;
 };
 

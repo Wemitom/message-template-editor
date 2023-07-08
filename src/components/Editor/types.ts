@@ -26,6 +26,9 @@ interface IfInput extends InputBase {
   children: [OtherInput, OtherInput];
 }
 
+/**
+ * Поле для ввода. Первое поле в дереве имеет тип normal и является корнем.
+ */
 interface OtherInput extends InputBase {
   type: 'normal' | 'then' | 'else';
   /**
@@ -34,6 +37,9 @@ interface OtherInput extends InputBase {
   children?: [IfInput, OtherInput];
 }
 
+/**
+ * Узлы дерева
+ */
 type Input = IfInput | OtherInput;
 
 interface ActionChange {

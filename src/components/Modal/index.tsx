@@ -4,7 +4,7 @@ import styles from './Modal.module.css';
 import useEscapeKey from '../../utils/hooks/useEscapeKey';
 import useOutsideClickDetect from '../../utils/hooks/useOutsideClickDetect';
 
-const Preview = ({
+const Modal = ({
   title,
   onClose,
   children
@@ -35,4 +35,4 @@ const Preview = ({
   );
 };
 
-export default Preview;
+export default Modal;

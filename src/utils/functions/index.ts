@@ -30,6 +30,7 @@ const changeNode = (
 ) => {
   if (root === null) return null;
 
+  // Если id узла равен uid, то нашли нужный узел, изменяем значение
   if (root.uid === uid) {
     return {
       ...root,
@@ -38,6 +39,7 @@ const changeNode = (
     };
   }
 
+  // Иначе ищем дальше
   if (root.type === 'if') {
     const firstUpdatedChild = changeNode(
       root.children[0],
@@ -83,7 +85,6 @@ const changeNode = (
  * @param {{uid?: string; children?: [IfInput, OtherInput] | [OtherInput, OtherInput]; value?: string; child?: Input;}} options - Опции, используемые для фильтрации узлов.
  * @return {Input | null} Соответствующий узел или null, если совпадение не найдено.
  */
-
 const getNode = (
   root: Input | null,
   {
@@ -155,9 +156,19 @@ const getNode = (
 
 // }
 
-const replaceVars = (string: string, values: Record<string, string>) => {
+/**
+ * Заменяет переменные в строке на их соответствующие значения.
+ *
+ * @param {string} string - Строка, в которой нужно выполнить замену переменных.
+ * @param {Record<string, string>} values - Объект, содержащий пары ключ-значение переменных и их значений.
+ * @return {string} - Строка с замененными переменными на соответствующие значения.
+ */
+const replaceVars = (
+  string: string,
+  values: Record<string, string>
+): string => {
   Object.keys(values).forEach((key) => {
-    string = string.replace(`{${key}}`, values[key]);
+    string = string.replace(`{${key}}`, values[key] ? values[key] : `{${key}}`);
   });
   return string;
 };
@@ -175,17 +186,19 @@ const getStringFromTemplate = (
 ): string => {
   if (template.type === 'if') {
     const value = template.value;
+    // Значение должно начинаться с '{' и заканчиваться '}', только затем проверяем на наличие в массиве values
     return value.startsWith('{') &&
       value.endsWith('}') &&
-      values[template.value.replace(/{|}/g, '')]
-      ? getStringFromTemplate(template.children[0], values)
-      : getStringFromTemplate(template.children[1], values);
+      values[value.replace(/{|}/g, '')]
+      ? getStringFromTemplate(template.children[0], values) // Если для переменной есть строка, возвращаем строку then
+      : getStringFromTemplate(template.children[1], values); // В обратном случае, возвращаем строку else
   } else {
     return (
+      // Если инпут не условный, заменяем переменные на соответствующие значения
       replaceVars(template.value, values) +
       (template.children
-        ? getStringFromTemplate(template.children[0], values) +
-          getStringFromTemplate(template.children[1], values)
+        ? getStringFromTemplate(template.children[0], values) + // Если есть дочерние узлы, рекурсивно получаем строку для инпута if
+          getStringFromTemplate(template.children[1], values) // и для инпута else
         : '')
     );
   }

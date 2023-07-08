@@ -155,4 +155,37 @@ const getNode = (
 
 // }
 
-export { generateUID, changeNode, getNode };
+const replaceVars = (string: string, values: Record<string, string>) => {
+  Object.keys(values).forEach((key) => {
+    string = string.replace(`{${key}}`, values[key]);
+  });
+  return string;
+};
+
+/**
+ * Возвращает строку, сгенерированную из шаблона на основе предоставленных значений.
+ *
+ * @param {Input} template - Объект шаблона.
+ * @param {Record<string, string>} values - Значения для подстановки в шаблон.
+ * @return {string} Сгенерированная строка.
+ */
+const getStringFromTemplate = (
+  template: Input,
+  values: Record<string, string>
+): string => {
+  if (template.type === 'if') {
+    return values[template.value.replace(/{|}/g, '')]
+      ? getStringFromTemplate(template.children[0], values)
+      : getStringFromTemplate(template.children[1], values);
+  } else {
+    return (
+      replaceVars(template.value, values) +
+      (template.children
+        ? getStringFromTemplate(template.children[0], values) +
+          getStringFromTemplate(template.children[1], values)
+        : '')
+    );
+  }
+};
+
+export { generateUID, changeNode, getNode, getStringFromTemplate };

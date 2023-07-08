@@ -229,7 +229,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
           title="Message Template Preview"
           onClose={() => setShowPreview(false)}
         >
-          <Preview />
+          <Preview arrVarNames={arrVarNames} template={state} />
         </Modal>
       )}
     </div>

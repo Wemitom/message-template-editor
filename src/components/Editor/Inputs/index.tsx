@@ -27,7 +27,13 @@ const Inputs = () => {
             {input.type === 'if' && (
               <button
                 className={styles.deleteBtn}
-                onClick={() => removeIfThenElse(input)}
+                onClick={() => {
+                  setLastPosition({
+                    input: template,
+                    position: 0
+                  });
+                  removeIfThenElse(input);
+                }}
               >
                 Delete
               </button>

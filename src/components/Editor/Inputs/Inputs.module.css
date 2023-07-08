@@ -38,4 +38,13 @@
   background-color: #f12525;
   color: #fff;
   border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: rgb(241, 37, 37, 0.8);
+}
+
+.deleteBtn:active {
+  background-color: #d21d1d;
 }

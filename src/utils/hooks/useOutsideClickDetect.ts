@@ -9,7 +9,7 @@ function isNode(event: EventTarget | null): asserts event is Node {
 // Хук для выполнения функции по клику снаружи div. На вход - ref на div; Функция, выполняемая по клику.
 const useOutsideClickDetect = (
   ref: MutableRefObject<HTMLDivElement | HTMLUListElement | null>,
-  func: (...arg: any) => void
+  func: () => void
 ) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

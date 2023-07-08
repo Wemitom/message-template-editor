@@ -25,7 +25,8 @@ const Variables = ({ children }: { children: ReactNode }) => {
 const reducer = (state: OtherInput, action: Action) => {
   let firstPart = '',
     secondPart = '',
-    otherElement: OtherInput;
+    otherElement: OtherInput,
+    parent: OtherInput | null;
   const thenElement: OtherInput = {
     type: 'then',
     value: '',
@@ -80,16 +81,31 @@ const reducer = (state: OtherInput, action: Action) => {
       }
 
       return changeNode(
-        changeNode(state, action.payload.input.uid, firstPart, [
-          ifElement,
-          otherElement
-        ]) as OtherInput,
+        changeNode(
+          state,
+          action.payload.input.uid,
+          firstPart,
+          [ifElement, otherElement],
+          true
+        ) as OtherInput,
         ifElement.uid,
         undefined,
-        [thenElement, elseElement]
+        [thenElement, elseElement],
+        true
       ) as OtherInput;
     case 'REMOVE_IF_THEN_ELSE':
-      return state;
+      parent = getNode(state, {
+        child: action.payload
+      }) as OtherInput | null;
+      if (!parent) return state;
+
+      return changeNode(
+        state,
+        parent.uid,
+        undefined,
+        undefined,
+        true
+      ) as OtherInput;
   }
 };
 const initTemplate: OtherInput = {

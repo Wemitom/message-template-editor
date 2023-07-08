@@ -9,7 +9,8 @@ import { Input } from '../types';
  * контексте TemplateContext.
  */
 const Inputs = () => {
-  const { template, changeValue, setLastPosition } = useTemplate();
+  const { template, changeValue, removeIfThenElse, setLastPosition } =
+    useTemplate();
 
   /**
    * Возвращает компонент, представляющий поле для ввода на основе его типа.
@@ -22,8 +23,15 @@ const Inputs = () => {
       <>
         {input.type !== 'normal' && (
           <span>
-            <span>{input.type}</span>{' '}
-            <button className={styles.deleteBtn}>Delete</button>
+            <span>{input.type}</span>
+            {input.type === 'if' && (
+              <button
+                className={styles.deleteBtn}
+                onClick={() => removeIfThenElse(input)}
+              >
+                Delete
+              </button>
+            )}
           </span>
         )}
         <TextareaAutosize

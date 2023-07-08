@@ -152,10 +152,6 @@ const getNode = (
   return null;
 };
 
-// const mergeNodeValues = (root: Input, parent: OtherInput) => {
-
-// }
-
 /**
  * Заменяет переменные в строке на их соответствующие значения.
  *

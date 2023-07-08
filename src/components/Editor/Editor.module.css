@@ -1,52 +1,95 @@
 /* Стили для компонента Editor */
 .container {
-    padding: 1rem 3rem;
+  padding: 1rem 3rem;
 }
 
 .btnIfThenElse {
-    padding: 1rem 2rem;
-    border: 0;
-    background-color: #454545;
-    cursor: pointer;
-    font-weight: 700;
-    color: #03ae03;
-    border-radius: 2rem;
-    text-transform: uppercase;
+  padding: 1rem 2rem;
+  border: 0;
+  background-color: #454545;
+  cursor: pointer;
+  font-weight: 700;
+  color: #03ae03;
+  border-radius: 2rem;
+  text-transform: uppercase;
 }
 
 .btnIfThenElse:hover {
-    background-color: rgb(69, 69, 69, 0.8);
+  background-color: rgb(69, 69, 69, 0.8);
 }
 
 .btnIfThenElse:active {
-    background-color: #363636;
+  background-color: #363636;
+}
+
+.btns {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.previewBtn {
+  flex: 1;
+  max-width: 15%;
+  padding: 10px 0;
+  border: 0;
+  background-color: #04b0ea;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2rem;
+}
+
+.saveBtn {
+  flex: 1;
+  max-width: 15%;
+  padding: 10px 0;
+  border: 0;
+  background-color: #11c311;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2rem;
+}
+
+.closeBtn {
+  flex: 1;
+  max-width: 15%;
+  padding: 10px 0;
+  border: 0;
+  background-color: #ea0404;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2rem;
 }
 /*                             */
 
 /* Стили для компонента Variables */
 .containerVar {
-    margin: 1rem 0;
-    display: flex;
-    flex-direction: column;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .variables {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    list-style: none;
-    padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
 }
 
 .variable {
-    padding: 0.5rem 2rem;
-    background-color: #1e1e1e;
-    color: #03ae03;
-    border-radius: 0.5rem;
-    cursor: pointer;
+  padding: 0.5rem 2rem;
+  background-color: #1e1e1e;
+  color: #03ae03;
+  border-radius: 0.5rem;
+  cursor: pointer;
 }
 /*                                 */

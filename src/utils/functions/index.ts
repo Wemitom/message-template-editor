@@ -1,4 +1,9 @@
-import { IfInput, Input, OtherInput } from '../../components/Editor/types';
+import {
+  IfInput,
+  Input,
+  InputTypes,
+  OtherInput
+} from '../../components/Editor/types';
 
 /**
  * Генерирует уникальный идентификатор, объединяя временную метку и случайное число.

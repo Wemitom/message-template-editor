@@ -23,3 +23,12 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.deleteBtn {
+  margin-left: 0.5rem;
+  float: right;
+  border: 0;
+  background-color: #f12525;
+  color: #fff;
+  border-radius: 0.5rem;
+}

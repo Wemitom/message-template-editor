@@ -62,11 +62,11 @@ interface IProps {
   /**
    * Шаблон
    */
-  template?: Input;
+  template?: OtherInput;
   /**
    * Обработчик сохранения шаблона
    */
-  callbackSave: (template: Input) => Promise<void>;
+  callbackSave: (template: OtherInput) => Promise<void>;
 }
 
 interface TemplateContextInterface {
@@ -84,6 +84,7 @@ interface CursorPosition {
 
 export type {
   Input,
+  InputTypes,
   OtherInput,
   IfInput,
   IProps,

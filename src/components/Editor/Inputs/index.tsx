@@ -14,15 +14,18 @@ const Inputs = () => {
   /**
    * Возвращает компонент, представляющий поле для ввода на основе его типа.
    *
-   * @param {number} i - Индекс поля.
-   * @param {Input} input - Объект поля.
-   * @param {boolean} ifThenElse - Необязательный. Указывает, нужно ли рендерить компонент if-then-else.
+   * @param {Input} input - Инпут, который нужно рендерить.
    * @return {JSX.Element} Компонент, представляющий поле для ввода.
    */
   const getInputs = (input: Input) => {
     const component: JSX.Element = (
       <>
-        {input.type !== 'normal' && <span>{input.type}</span>}
+        {input.type !== 'normal' && (
+          <span>
+            <span>{input.type}</span>{' '}
+            <button className={styles.deleteBtn}>Delete</button>
+          </span>
+        )}
         <TextareaAutosize
           className={styles.textarea}
           value={input.value}
@@ -60,7 +63,7 @@ const Inputs = () => {
   /**
    * Рекурсивно рендерит компонент if-then-else.
    *
-   * @param {number} i - Индекс if инпута.
+   * @param {number} input - Инпут, который нужно рендерить.
    * @return {JSX.Element} Зарендеренный компонент.
    */
   const renderIfThenElse = (input: Input): JSX.Element => {

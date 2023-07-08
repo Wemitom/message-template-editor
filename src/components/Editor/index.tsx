@@ -110,10 +110,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
     input: template ?? initTemplate,
     position: 0
   });
-  const [state, dispatch] = useReducer(
-    reducer,
-    (template as OtherInput) ?? initTemplate
-  );
+  const [state, dispatch] = useReducer(reducer, template ?? initTemplate);
   const changeValue = (input: Input, uid: string, value: string) =>
     dispatch({ type: 'CHANGE_VALUE', payload: { input, uid, value } });
   const addIfThenElse = (input: Input, position: number) =>
@@ -176,6 +173,14 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
       >
         <Inputs />
       </TemplateContext.Provider>
+
+      <div className={styles.btns}>
+        <button className={styles.previewBtn}>Preview</button>
+        <button className={styles.saveBtn} onClick={() => callbackSave(state)}>
+          Save
+        </button>
+        <button className={styles.closeBtn}>Close</button>
+      </div>
     </div>
   );
 };

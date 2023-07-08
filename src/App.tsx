@@ -6,7 +6,6 @@ import Editor from './components/Editor';
 /**
  * Основной компонент, который вызывается при запуске приложения. Производит рендер компонента Editor,
  * при нажании на кнопку "Message Editor".
- * @component
  */
 function App() {
   // state для открытия/закрытия редактора

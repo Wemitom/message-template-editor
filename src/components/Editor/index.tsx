@@ -11,7 +11,7 @@ import {
   OtherInput,
   TemplateContextInterface
 } from './types';
-import { changeNode, generateUID } from '../../utils/functions';
+import { changeNode, generateUID, getNode } from '../../utils/functions';
 
 const Variables = ({ children }: { children: ReactNode }) => {
   return (
@@ -64,11 +64,20 @@ const reducer = (state: OtherInput, action: Action) => {
         ['', '']
       );
 
-      otherElement = {
-        type: action.payload.input.type,
-        value: secondPart,
-        uid: generateUID()
-      };
+      if (action.payload.input.children) {
+        otherElement = {
+          type: action.payload.input.type,
+          value: secondPart,
+          uid: generateUID(),
+          children: action.payload.input.children
+        };
+      } else {
+        otherElement = {
+          type: action.payload.input.type,
+          value: secondPart,
+          uid: generateUID()
+        };
+      }
 
       return changeNode(
         changeNode(state, action.payload.input.uid, firstPart, [

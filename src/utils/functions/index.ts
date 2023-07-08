@@ -1,9 +1,4 @@
-import {
-  IfInput,
-  Input,
-  InputTypes,
-  OtherInput
-} from '../../components/Editor/types';
+import { IfInput, Input, OtherInput } from '../../components/Editor/types';
 
 /**
  * Генерирует уникальный идентификатор, объединяя временную метку и случайное число.
@@ -36,7 +31,7 @@ const changeNode = (
   if (root.uid === uid) {
     return {
       ...root,
-      value: value || root.value,
+      value: value !== undefined ? value : root.value,
       children: children || root.children
     };
   }
@@ -75,4 +70,45 @@ const changeNode = (
   return root;
 };
 
-export { generateUID, changeNode };
+const getNode = (
+  root: Input | null,
+  {
+    uid,
+    children,
+    value
+  }: {
+    uid?: string;
+    children?: [IfInput, OtherInput] | [OtherInput, OtherInput];
+    value?: string;
+  }
+): Input | null => {
+  if (root === null) return null;
+
+  const isMatchingNode =
+    (!uid || root.uid === uid) &&
+    (!children ||
+      (root.children &&
+        root.children[0].uid === children[0].uid &&
+        root.children[1].uid === children[1].uid)) &&
+    (value === undefined || root.value === value);
+
+  if (isMatchingNode) {
+    return root;
+  }
+
+  if (root.type === 'if') {
+    const firstChild = getNode(root.children[0], { uid, children, value });
+    const secondChild = getNode(root.children[1], { uid, children, value });
+
+    return firstChild || secondChild || null;
+  } else if (root.children) {
+    const firstChild = getNode(root.children[0], { uid, children, value });
+    const secondChild = getNode(root.children[1], { uid, children, value });
+
+    return firstChild || secondChild || null;
+  }
+
+  return null;
+};
+
+export { generateUID, changeNode, getNode };

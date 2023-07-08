@@ -174,7 +174,10 @@ const getStringFromTemplate = (
   values: Record<string, string>
 ): string => {
   if (template.type === 'if') {
-    return values[template.value.replace(/{|}/g, '')]
+    const value = template.value;
+    return value.startsWith('{') &&
+      value.endsWith('}') &&
+      values[template.value.replace(/{|}/g, '')]
       ? getStringFromTemplate(template.children[0], values)
       : getStringFromTemplate(template.children[1], values);
   } else {

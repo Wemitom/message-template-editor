@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 import styles from './Modal.module.css';
 import useEscapeKey from '../../utils/hooks/useEscapeKey';
@@ -16,6 +16,14 @@ const Preview = ({
   const ref = useRef<HTMLDivElement | null>(null);
   useOutsideClickDetect(ref, onClose);
   useEscapeKey(onClose, true);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   return (
     <div className={styles.modal}>

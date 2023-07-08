@@ -28,6 +28,7 @@
   gap: 1rem;
   margin-top: 2rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .previewBtn {
@@ -40,6 +41,7 @@
   font-weight: 600;
   cursor: pointer;
   border-radius: 2rem;
+  min-width: 200px;
 }
 
 .saveBtn {
@@ -52,6 +54,7 @@
   font-weight: 600;
   cursor: pointer;
   border-radius: 2rem;
+  min-width: 200px;
 }
 /*                             */
 

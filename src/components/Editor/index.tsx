@@ -237,12 +237,15 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
 
       <div className={styles.btns}>
         <button
-          className={styles.previewBtn}
+          className={`${styles.previewBtn} btn`}
           onClick={() => setShowPreview(true)}
         >
           Preview
         </button>
-        <button className={styles.saveBtn} onClick={() => callbackSave(state)}>
+        <button
+          className={`${styles.saveBtn} btn`}
+          onClick={() => callbackSave(state)}
+        >
           Save
         </button>
       </div>

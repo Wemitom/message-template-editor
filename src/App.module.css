@@ -31,18 +31,16 @@
 }
 
 .closeBtn {
-  flex: 1;
-  max-width: 15%;
-  padding: 10px 0;
-  border: 0;
   background-color: #ea0404;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 2rem;
-  width: 30%;
-  min-width: 200px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.closeBtn:hover {
+  background-color: rgb(234, 4, 4, 0.8);
+}
+
+.closeBtn:active {
+  background-color: #b30404;
 }
 
 @keyframes fade-in {

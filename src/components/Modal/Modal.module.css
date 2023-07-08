@@ -11,9 +11,47 @@
   z-index: 9999;
 }
 
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes leave {
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
 .modalContents {
   background: #121212;
   padding: 1rem 3rem;
   border-radius: 4px;
   max-width: 70%;
+  opacity: 0;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enter {
+  animation: enter 0.3s ease-in-out forwards;
+}
+
+.leave {
+  animation: leave 0.3s ease-in-out forwards;
+}
+
+.closeBtn {
+  background-color: #ea0404;
+  margin: 1rem 0;
+}
+
+.closeBtn:hover {
+  background-color: rgb(234, 4, 4, 0.8);
+}
+
+.closeBtn:active {
+  background-color: #b30404;
 }

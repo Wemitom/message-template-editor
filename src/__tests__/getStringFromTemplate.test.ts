@@ -190,4 +190,45 @@ describe('getStringFromTemplate', () => {
     const resultNo = getStringFromTemplate(templateNoBraces, values);
     expect(resultNo).toEqual('Hello, name! How are you?');
   });
+
+  it('should always return else if variable in if input doesnt exist', () => {
+    const template: Input = {
+      type: 'normal',
+      value: 'Hello {name}! How is your {timeOfDay}? ',
+      uid: '5678',
+      children: [
+        {
+          type: 'if',
+          value: '{var1}',
+          uid: '5678-1',
+          children: [
+            {
+              type: 'then',
+              value: 'This is the true branch. ',
+              uid: '5678-1-1'
+            },
+            {
+              type: 'else',
+              value: 'This is the false branch. ',
+              uid: '5678-1-2'
+            }
+          ]
+        },
+        {
+          type: 'normal',
+          value: 'Best Regards, John',
+          uid: '1234'
+        }
+      ]
+    };
+
+    const valuesTrue: Record<string, string> = {
+      name: 'Tom',
+      timeOfDay: 'day'
+    };
+    const resultTrue = getStringFromTemplate(template, valuesTrue);
+    expect(resultTrue).toEqual(
+      'Hello Tom! How is your day? This is the false branch. Best Regards, John'
+    );
+  });
 });

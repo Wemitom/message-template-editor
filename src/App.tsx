@@ -36,7 +36,10 @@ function App() {
           }}
         />
         <div className={styles.closeBtnContainer}>
-          <button className={styles.closeBtn} onClick={() => onClose()}>
+          <button
+            className={`${styles.closeBtn} btn`}
+            onClick={() => onClose()}
+          >
             Close
           </button>
         </div>

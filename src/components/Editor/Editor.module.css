@@ -32,29 +32,27 @@
 }
 
 .previewBtn {
-  flex: 1;
-  max-width: 15%;
-  padding: 10px 0;
-  border: 0;
   background-color: #04b0ea;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 2rem;
-  min-width: 200px;
+}
+
+.previewBtn:hover {
+  background-color: rgb(4, 176, 234, 0.8);
+}
+
+.previewBtn:active {
+  background-color: #0589b6;
 }
 
 .saveBtn {
-  flex: 1;
-  max-width: 15%;
-  padding: 10px 0;
-  border: 0;
   background-color: #11c311;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 2rem;
-  min-width: 200px;
+}
+
+.saveBtn:hover {
+  background-color: rgb(17, 203, 17, 0.8);
+}
+
+.saveBtn:active {
+  background-color: #0f8a0f;
 }
 /*                             */
 

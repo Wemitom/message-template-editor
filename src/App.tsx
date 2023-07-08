@@ -10,11 +10,16 @@ import Editor from './components/Editor';
 function App() {
   // state для открытия/закрытия редактора
   const [openEditor, setOpenEditor] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
+  const onClose = () => {
+    setFadeIn(false);
+    setTimeout(() => setOpenEditor(false), 500);
+  };
 
   // Если кнопка "Message Editor" нажата, то открывается редактор
   if (openEditor) {
     return (
-      <div>
+      <div className={fadeIn ? styles.fadeIn : styles.fadeOut}>
         <Editor
           arrVarNames={
             localStorage.arrVarNames
@@ -30,13 +35,24 @@ function App() {
             }, 1000);
           }}
         />
+        <div className={styles.closeBtnContainer}>
+          <button className={styles.closeBtn} onClick={() => onClose()}>
+            Close
+          </button>
+        </div>
       </div>
     );
   }
   // Если кнопка "Message Editor" не нажата, то ренедрится кнопка
   return (
     <div className={styles.container}>
-      <button className={styles.btn} onClick={() => setOpenEditor(!openEditor)}>
+      <button
+        className={styles.btn}
+        onClick={() => {
+          setFadeIn(true);
+          setOpenEditor(!openEditor);
+        }}
+      >
         Message Editor
       </button>
     </div>

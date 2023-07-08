@@ -1,6 +1,7 @@
 /* Стили для компонента Editor */
 .container {
   padding: 1rem 3rem;
+  animation: fade-in 0.5s ease-in-out forwards;
 }
 
 .btnIfThenElse {
@@ -47,18 +48,6 @@
   padding: 10px 0;
   border: 0;
   background-color: #11c311;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 2rem;
-}
-
-.closeBtn {
-  flex: 1;
-  max-width: 15%;
-  padding: 10px 0;
-  border: 0;
-  background-color: #ea0404;
   color: #fff;
   font-weight: 600;
   cursor: pointer;

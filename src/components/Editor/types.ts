@@ -54,19 +54,25 @@ interface ActionRemoveIfThenElse {
 }
 type Action = ActionChange | ActionAddIfThenElse | ActionRemoveIfThenElse;
 
-interface IProps {
+/**
+ * Пропсы виджета редактора шаблона
+ */
+interface EditorProps {
   /**
-   * Массив переменных
+   * Массив имен переменных
    */
   arrVarNames: string[];
   /**
-   * Шаблон
+   * Шаблон сообщения
    */
   template?: OtherInput;
   /**
    * Обработчик сохранения шаблона
    */
   callbackSave: (template: OtherInput) => Promise<void>;
+  /**
+   * Обработчик закрытия виджета
+   */
 }
 
 interface TemplateContextInterface {
@@ -87,7 +93,7 @@ export type {
   InputTypes,
   OtherInput,
   IfInput,
-  IProps,
+  EditorProps,
   Action,
   TemplateContextInterface,
   CursorPosition

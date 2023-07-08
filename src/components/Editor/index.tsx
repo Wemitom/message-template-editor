@@ -5,13 +5,15 @@ import Inputs from './Inputs';
 import {
   Action,
   CursorPosition,
-  IProps,
+  EditorProps,
   IfInput,
   Input,
   OtherInput,
   TemplateContextInterface
 } from './types';
 import { changeNode, generateUID, getNode } from '../../utils/functions';
+import Modal from '../Modal';
+import Preview from '../Preview';
 
 const Variables = ({ children }: { children: ReactNode }) => {
   return (
@@ -93,6 +95,7 @@ const reducer = (state: OtherInput, action: Action) => {
         [thenElement, elseElement],
         true
       ) as OtherInput;
+    // TODO make so values get merged on delete
     case 'REMOVE_IF_THEN_ELSE':
       parent = getNode(state, {
         child: action.payload
@@ -130,7 +133,7 @@ export const TemplateContext = createContext<TemplateContextInterface>({
   }
 });
 
-const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
+const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
   const [lastPosition, setLastPosition] = useState<CursorPosition>({
     input: template ?? initTemplate,
     position: 0
@@ -145,6 +148,8 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
     });
   const removeIfThenElse = (input: Input) =>
     dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: input });
+
+  const [showPreview, setShowPreview] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -180,12 +185,20 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
         ))}
       </Variables>
 
-      <button
-        className={styles.btnIfThenElse}
-        onClick={() => addIfThenElse(lastPosition.input, lastPosition.position)}
-      >
-        if | then | else
-      </button>
+      <span style={{ display: 'flex', justifyContent: 'center' }}>
+        <button
+          className={styles.btnIfThenElse}
+          onClick={() => {
+            addIfThenElse(lastPosition.input, lastPosition.position);
+            setLastPosition({
+              input: lastPosition.input,
+              position: lastPosition.input.value.length
+            });
+          }}
+        >
+          if | then | else
+        </button>
+      </span>
 
       <TemplateContext.Provider
         value={{
@@ -200,12 +213,25 @@ const Editor = ({ arrVarNames, template, callbackSave }: IProps) => {
       </TemplateContext.Provider>
 
       <div className={styles.btns}>
-        <button className={styles.previewBtn}>Preview</button>
+        <button
+          className={styles.previewBtn}
+          onClick={() => setShowPreview(true)}
+        >
+          Preview
+        </button>
         <button className={styles.saveBtn} onClick={() => callbackSave(state)}>
           Save
         </button>
-        <button className={styles.closeBtn}>Close</button>
       </div>
+
+      {showPreview && (
+        <Modal
+          title="Message Template Preview"
+          onClose={() => setShowPreview(false)}
+        >
+          <Preview />
+        </Modal>
+      )}
     </div>
   );
 };

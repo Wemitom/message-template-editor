@@ -1,25 +1,64 @@
 .container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 1rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 .btn {
-    padding: 1rem 2rem;
-    border: 0;
-    background-color: #04b0ea;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 2rem;
+  padding: 1rem 2rem;
+  border: 0;
+  background-color: #04b0ea;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2rem;
 }
 
 .btn:hover {
-    background-color: rgb(4, 176, 234, 0.8);
-    color: #fff;
+  background-color: rgb(4, 176, 234, 0.8);
+  color: #fff;
 }
 
 .btn:active {
-    background-color: #0599cb;
+  background-color: #0599cb;
+}
+
+.closeBtnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.closeBtn {
+  flex: 1;
+  max-width: 15%;
+  padding: 10px 0;
+  border: 0;
+  background-color: #ea0404;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2rem;
+  width: 30%;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.fadeIn {
+  animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.fadeOut {
+  animation: fade-out 0.5s ease-in-out forwards;
 }

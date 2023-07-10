@@ -183,6 +183,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
               const newValue = lastPosition.input.value.split('');
               newValue.splice(lastPosition.position, 0, `{${name}}`);
 
+              lastPosition.input.value = newValue.join('');
               /**
                * Вставляем переменную в инпут на основе последнего положения курсора
                */
@@ -191,6 +192,14 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
                 lastPosition.input.uid,
                 newValue.join('')
               );
+
+              /**
+               * Обновляем последнюю позицию курсора
+               */
+              setLastPosition({
+                input: lastPosition.input,
+                position: lastPosition.position + name.length + 2 // Скобки +2
+              });
             }}
             tabIndex={0}
           >{`{${name}}`}</li>

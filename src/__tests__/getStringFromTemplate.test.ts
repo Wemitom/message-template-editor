@@ -222,14 +222,36 @@ describe('getStringFromTemplate', () => {
       ]
     };
 
-    const valuesTrue: Record<string, string> = {
+    const valuesTrueFirst: Record<string, string> = {
       name: 'Tom',
       timeOfDay: 'day',
       var1: 'a',
       var2: 'a'
     };
-    const resultTrue = getStringFromTemplate(template, valuesTrue);
-    expect(resultTrue).toEqual(
+    const resultTrueFirst = getStringFromTemplate(template, valuesTrueFirst);
+    expect(resultTrueFirst).toEqual(
+      'Hello Tom! How is your day? This is the true branch. Best Regards, John'
+    );
+
+    const valuesTrueSecond: Record<string, string> = {
+      name: 'Tom',
+      timeOfDay: 'day',
+      var1: 'a',
+      var2: ''
+    };
+    const resultTrueSecond = getStringFromTemplate(template, valuesTrueSecond);
+    expect(resultTrueSecond).toEqual(
+      'Hello Tom! How is your day? This is the true branch. Best Regards, John'
+    );
+
+    const valuesTrueThird: Record<string, string> = {
+      name: 'Tom',
+      timeOfDay: 'day',
+      var1: '',
+      var2: 'a'
+    };
+    const resultTrueThird = getStringFromTemplate(template, valuesTrueThird);
+    expect(resultTrueThird).toEqual(
       'Hello Tom! How is your day? This is the true branch. Best Regards, John'
     );
 
@@ -242,6 +264,45 @@ describe('getStringFromTemplate', () => {
     const resultFalse = getStringFromTemplate(template, valuesFalse);
     expect(resultFalse).toEqual(
       'Hello Tom! How is your day? This is the false branch. Best Regards, John'
+    );
+  });
+
+  it("shouldn`t replace variables that don't exist", () => {
+    const template: Input = {
+      type: 'normal',
+      value: 'Hello {name}! How is your {timeOfDay}? ',
+      uid: '5678',
+      children: [
+        {
+          type: 'if',
+          value: '{var1}',
+          uid: '5678-1',
+          children: [
+            {
+              type: 'then',
+              value: 'This is the true branch. ',
+              uid: '5678-1-1'
+            },
+            {
+              type: 'else',
+              value: 'This is the false branch. ',
+              uid: '5678-1-2'
+            }
+          ]
+        },
+        {
+          type: 'normal',
+          value: 'Best Regards, John',
+          uid: '1234'
+        }
+      ]
+    };
+
+    const values: Record<string, string> = {};
+
+    const result = getStringFromTemplate(template, values);
+    expect(result).toEqual(
+      'Hello {name}! How is your {timeOfDay}? This is the false branch. Best Regards, John'
     );
   });
 });

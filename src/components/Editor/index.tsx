@@ -232,13 +232,14 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
             addIfThenElse(
               lastPosition.input,
               lastPosition.position,
-              (newState) =>
+              (newState) => {
                 setLastPosition({
                   input:
                     getNode(newState, { uid: lastPosition.input.uid }) ??
                     newState,
-                  position: lastPosition.input.value.length
-                })
+                  position: lastPosition.position
+                });
+              }
             );
             /**
              * Обновляем последнюю позицию курсора, т.к. строка могла быть изменена

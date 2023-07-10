@@ -38,12 +38,12 @@ const Inputs = () => {
                     const isChildOfDeletedIf = !!getNode(input, {
                       child: lastPosition.input
                     });
-                    const isMergedInput = getNode(
-                      getNode(template, { child: input }),
-                      {
+                    const isMergedInput =
+                      !!getNode(getNode(template, { child: input }), {
                         child: lastPosition.input
-                      }
-                    );
+                      }) ||
+                      getNode(template, { child: input })?.uid ===
+                        lastPosition.input.uid;
 
                     if (isChildOfDeletedIf || isMergedInput) {
                       setLastPosition({ input: newState, position: 0 });

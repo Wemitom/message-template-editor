@@ -73,7 +73,7 @@ const Preview = ({ arrVarNames, template }: PreviewProps) => {
         replaceVars(template.value, values) +
         (template.children
           ? getStringFromTemplate(template.children[0], values) + // Если есть дочерние узлы, рекурсивно получаем строку для инпута if
-            getStringFromTemplate(template.children[1], values) // и для инпута else
+            getStringFromTemplate(template.children[1], values) // и для второй части
           : '')
       );
     }

@@ -181,15 +181,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
             role="button"
             onClick={() => {
               const newValue = lastPosition.input.value.split('');
-              newValue.splice(
-                lastPosition.position,
-                0,
-                `${lastPosition.position !== 0 ? ' ' : ''}{${name}}${
-                  lastPosition.position !== lastPosition.input.value.length
-                    ? ' '
-                    : ''
-                }`
-              );
+              newValue.splice(lastPosition.position, 0, `{${name}}`);
 
               /**
                * Вставляем переменную в инпут на основе последнего положения курсора

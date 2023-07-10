@@ -191,7 +191,7 @@ describe('getStringFromTemplate', () => {
     expect(resultNo).toEqual('Hello, name! How are you?');
   });
 
-  it('should always return else if variable in if input doesnt exist', () => {
+  it('should work with multiple variables in if-then-else', () => {
     const template: Input = {
       type: 'normal',
       value: 'Hello {name}! How is your {timeOfDay}? ',
@@ -199,7 +199,7 @@ describe('getStringFromTemplate', () => {
       children: [
         {
           type: 'if',
-          value: '{var1}',
+          value: '{var1}{var2}',
           uid: '5678-1',
           children: [
             {
@@ -224,10 +224,22 @@ describe('getStringFromTemplate', () => {
 
     const valuesTrue: Record<string, string> = {
       name: 'Tom',
-      timeOfDay: 'day'
+      timeOfDay: 'day',
+      var1: 'a',
+      var2: 'a'
     };
     const resultTrue = getStringFromTemplate(template, valuesTrue);
     expect(resultTrue).toEqual(
+      'Hello Tom! How is your day? This is the true branch. Best Regards, John'
+    );
+
+    const valuesFalse: Record<string, string> = {
+      name: 'Tom',
+      timeOfDay: 'day',
+      var1: 'a'
+    };
+    const resultFalse = getStringFromTemplate(template, valuesFalse);
+    expect(resultFalse).toEqual(
       'Hello Tom! How is your day? This is the false branch. Best Regards, John'
     );
   });

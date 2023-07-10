@@ -164,7 +164,7 @@ const replaceVars = (
   values: Record<string, string>
 ): string => {
   Object.keys(values).forEach((key) => {
-    string = string.replace(`{${key}}`, values[key] ? values[key] : `{${key}}`);
+    string = string.replace(`{${key}}`, values[key]);
   });
   return string;
 };
@@ -181,16 +181,22 @@ const getStringFromTemplate = (
   values: Record<string, string>
 ): string => {
   if (template.type === 'if') {
-    const value = template.value;
-    // Значение должно начинаться с '{' и заканчиваться '}', только затем проверяем на наличие в массиве values
-    return value.startsWith('{') &&
-      value.endsWith('}') &&
-      values[value.replace(/{|}/g, '')]
+    /**
+     * Regex на проверку того, что строка будет содержать только переменные
+     */
+    const onlyVarsRegex = /^{[a-zA-Z0-9]+}(?:{[a-zA-Z0-9]+})*$/;
+
+    return onlyVarsRegex.test(template.value) && // Если строка будет содержать только переменные
+      template.value
+        .match(/{([a-zA-Z0-9]+)}/g) // Получаем все переменные
+        ?.map((match) => match.slice(1, -1)) // Убираем скобки
+        .every((name) => values[name]) && // Проверяем, что все переменные существуют
+      replaceVars(template.value, values) // Заменяем переменные на соответствующие значения
       ? getStringFromTemplate(template.children[0], values) // Если для переменной есть строка, возвращаем строку then
       : getStringFromTemplate(template.children[1], values); // В обратном случае, возвращаем строку else
   } else {
     return (
-      // Если инпут не условный, заменяем переменные на соответствующие значения
+      // Если инпут не условный, заменяем переменные на соответствующие значения и складываем с другими строками
       replaceVars(template.value, values) +
       (template.children
         ? getStringFromTemplate(template.children[0], values) + // Если есть дочерние узлы, рекурсивно получаем строку для инпута if

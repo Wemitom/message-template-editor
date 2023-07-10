@@ -1,6 +1,7 @@
 import TextareaAutosize from 'react-textarea-autosize';
 
 import styles from './Inputs.module.css';
+import { getNode } from '../../../utils/functions';
 import useTemplate from '../../../utils/hooks/useTemplate';
 import { Input } from '../types';
 
@@ -9,8 +10,13 @@ import { Input } from '../types';
  * контексте TemplateContext.
  */
 const Inputs = () => {
-  const { template, changeValue, removeIfThenElse, setLastPosition } =
-    useTemplate();
+  const {
+    template,
+    changeValue,
+    removeIfThenElse,
+    lastPosition,
+    setLastPosition
+  } = useTemplate();
 
   /**
    * Возвращает компонент, представляющий поле для ввода на основе его типа.
@@ -28,11 +34,21 @@ const Inputs = () => {
               <button
                 className={styles.deleteBtn}
                 onClick={() => {
-                  setLastPosition({
-                    input: template,
-                    position: 0
+                  removeIfThenElse(input, (newState) => {
+                    const isChildOfDeletedIf = !!getNode(input, {
+                      child: lastPosition.input
+                    });
+                    const isMergedInput = getNode(
+                      getNode(template, { child: input }),
+                      {
+                        child: lastPosition.input
+                      }
+                    );
+
+                    if (isChildOfDeletedIf || isMergedInput) {
+                      setLastPosition({ input: newState, position: 0 });
+                    }
                   });
-                  removeIfThenElse(input);
                 }}
               >
                 Delete

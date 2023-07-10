@@ -35,7 +35,8 @@ const reducer = (state: OtherInput, action: Action) => {
   let firstPart = '',
     secondPart = '',
     otherElement: OtherInput,
-    parent: OtherInput | null;
+    parent: OtherInput | null,
+    newState: OtherInput;
   const thenElement: OtherInput = {
     type: 'then',
     value: '',
@@ -52,7 +53,6 @@ const reducer = (state: OtherInput, action: Action) => {
     uid: generateUID(),
     children: [thenElement, elseElement]
   };
-
   switch (action.type) {
     case 'CHANGE_VALUE':
       /**
@@ -113,17 +113,21 @@ const reducer = (state: OtherInput, action: Action) => {
       ) as OtherInput;
     case 'REMOVE_IF_THEN_ELSE':
       parent = getNode(state, {
-        child: action.payload
+        child: action.payload.input
       }) as OtherInput | null;
       if (!parent) return state;
 
-      return changeNode(
+      newState = changeNode(
         state,
         parent.uid,
         parent.value + parent.children?.[1].value,
         parent.children?.[1].children, // Ставим дочерними узлами узлы другой части
         true
       ) as OtherInput;
+
+      action.payload.callback(newState);
+
+      return newState;
   }
 };
 const initTemplate: OtherInput = {
@@ -134,6 +138,10 @@ const initTemplate: OtherInput = {
 
 export const TemplateContext = createContext<TemplateContextInterface>({
   template: initTemplate,
+  lastPosition: {
+    input: initTemplate,
+    position: 0
+  },
   addIfThenElse: () => {
     return;
   },
@@ -164,8 +172,10 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
       type: 'ADD_IF_THEN_ELSE',
       payload: { input, position }
     });
-  const removeIfThenElse = (input: Input) =>
-    dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: input });
+  const removeIfThenElse = async (
+    input: Input,
+    callback: (newState: OtherInput) => void
+  ) => dispatch({ type: 'REMOVE_IF_THEN_ELSE', payload: { input, callback } });
 
   const [showPreview, setShowPreview] = useState(false);
 
@@ -227,6 +237,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
       <TemplateContext.Provider
         value={{
           template: state,
+          lastPosition,
           changeValue,
           addIfThenElse,
           removeIfThenElse,

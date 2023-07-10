@@ -52,7 +52,10 @@ interface ActionChange {
 }
 interface ActionAddIfThenElse {
   type: 'ADD_IF_THEN_ELSE';
-  payload: CursorPosition;
+  payload: {
+    lastPosition: CursorPosition;
+    callback: (newState: OtherInput) => void;
+  };
 }
 interface ActionRemoveIfThenElse {
   type: 'REMOVE_IF_THEN_ELSE';
@@ -85,7 +88,11 @@ interface TemplateContextInterface {
   template: Input;
   lastPosition: CursorPosition;
   changeValue: (input: Input, uid: string, value: string) => void;
-  addIfThenElse: (input: Input, position: number) => void;
+  addIfThenElse: (
+    input: Input,
+    position: number,
+    callback: (newState: OtherInput) => void
+  ) => void;
   removeIfThenElse: (
     input: Input,
     callback: (newState: OtherInput) => void

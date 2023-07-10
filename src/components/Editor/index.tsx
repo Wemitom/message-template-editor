@@ -65,31 +65,33 @@ const reducer = (state: OtherInput, action: Action) => {
       ) as OtherInput;
     case 'ADD_IF_THEN_ELSE':
       // Если узел типа 'if', возвращаем корень дерева, без изменения
-      if (action.payload.input.type === 'if') return state;
+      if (action.payload.lastPosition.input.type === 'if') return state;
 
       /**
        * Разбиваем строку по последнему положению курсора
        */
-      [firstPart, secondPart] = action.payload.input.value.split('').reduce(
-        ([first, second], letter, i) => {
-          if (i < action.payload.position) first += letter;
-          else second += letter;
+      [firstPart, secondPart] = action.payload.lastPosition.input.value
+        .split('')
+        .reduce(
+          ([first, second], letter, i) => {
+            if (i < action.payload.lastPosition.position) first += letter;
+            else second += letter;
 
-          return [first, second];
-        },
-        ['', '']
-      );
+            return [first, second];
+          },
+          ['', '']
+        );
 
-      if (action.payload.input.children) {
+      if (action.payload.lastPosition.input.children) {
         otherElement = {
-          type: action.payload.input.type,
+          type: action.payload.lastPosition.input.type,
           value: secondPart,
           uid: generateUID(),
-          children: action.payload.input.children
+          children: action.payload.lastPosition.input.children
         };
       } else {
         otherElement = {
-          type: action.payload.input.type,
+          type: action.payload.lastPosition.input.type,
           value: secondPart,
           uid: generateUID()
         };
@@ -98,10 +100,10 @@ const reducer = (state: OtherInput, action: Action) => {
       /**
        *  Возвращаем корень дерева, где для выбранного узла вставлены дочерние узлы if-then-else
        */
-      return changeNode(
+      newState = changeNode(
         changeNode(
           state,
-          action.payload.input.uid,
+          action.payload.lastPosition.input.uid,
           firstPart,
           [ifElement, otherElement],
           true
@@ -111,6 +113,9 @@ const reducer = (state: OtherInput, action: Action) => {
         [thenElement, elseElement],
         true
       ) as OtherInput;
+      action.payload.callback(newState);
+
+      return newState;
     case 'REMOVE_IF_THEN_ELSE':
       parent = getNode(state, {
         child: action.payload.input
@@ -167,10 +172,14 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
   const [state, dispatch] = useReducer(reducer, template ?? initTemplate);
   const changeValue = (input: Input, uid: string, value: string) =>
     dispatch({ type: 'CHANGE_VALUE', payload: { input, uid, value } });
-  const addIfThenElse = (input: Input, position: number) =>
+  const addIfThenElse = (
+    input: Input,
+    position: number,
+    callback: (newState: OtherInput) => void
+  ) =>
     dispatch({
       type: 'ADD_IF_THEN_ELSE',
-      payload: { input, position }
+      payload: { lastPosition: { input, position }, callback }
     });
   const removeIfThenElse = async (
     input: Input,
@@ -220,14 +229,20 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
         <button
           className={styles.btnIfThenElse}
           onClick={() => {
-            addIfThenElse(lastPosition.input, lastPosition.position);
+            addIfThenElse(
+              lastPosition.input,
+              lastPosition.position,
+              (newState) =>
+                setLastPosition({
+                  input:
+                    getNode(newState, { uid: lastPosition.input.uid }) ??
+                    newState,
+                  position: lastPosition.input.value.length
+                })
+            );
             /**
              * Обновляем последнюю позицию курсора, т.к. строка могла быть изменена
              */
-            setLastPosition({
-              input: lastPosition.input,
-              position: lastPosition.input.value.length
-            });
           }}
         >
           if | then | else

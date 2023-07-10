@@ -236,7 +236,8 @@ describe('getStringFromTemplate', () => {
     const valuesFalse: Record<string, string> = {
       name: 'Tom',
       timeOfDay: 'day',
-      var1: 'a'
+      var1: '',
+      var2: ''
     };
     const resultFalse = getStringFromTemplate(template, valuesFalse);
     expect(resultFalse).toEqual(

@@ -186,11 +186,11 @@ const getStringFromTemplate = (
      */
     const onlyVarsRegex = /^{[a-zA-Z0-9]+}(?:{[a-zA-Z0-9]+})*$/;
 
-    return onlyVarsRegex.test(template.value) && // Если строка будет содержать только переменные
+    return onlyVarsRegex.test(template.value) && // Если строка содержит только переменные
       template.value
         .match(/{([a-zA-Z0-9]+)}/g) // Получаем все переменные
         ?.map((match) => match.slice(1, -1)) // Убираем скобки
-        .every((name) => values[name]) && // Проверяем, что все переменные существуют
+        .every((name) => values[name] !== undefined) && // Проверяем, что все переменные существуют
       replaceVars(template.value, values) // Заменяем переменные на соответствующие значения
       ? getStringFromTemplate(template.children[0], values) // Если для переменной есть строка, возвращаем строку then
       : getStringFromTemplate(template.children[1], values); // В обратном случае, возвращаем строку else

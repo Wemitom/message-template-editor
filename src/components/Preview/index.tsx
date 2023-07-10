@@ -36,7 +36,8 @@ const Preview = ({ arrVarNames, template }: PreviewProps) => {
     values: Record<string, string>
   ): string => {
     arrVarNames.forEach((name) => {
-      string = string.replace(`{${name}}`, values[name] ?? '');
+      const regex = new RegExp(`{${name}}`, 'g');
+      string = string.replace(regex, values[name] ?? '');
     });
     return string;
   };

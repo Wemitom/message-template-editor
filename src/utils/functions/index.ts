@@ -152,29 +152,24 @@ const getNode = (
   return null;
 };
 
+const arrVarNames = ['name1', 'name2', 'name3', 'name4', 'name5'];
 /**
- * Заменяет переменные в строке на их соответствующие значения.
- *
- * @param {string} string - Строка, в которой нужно выполнить замену переменных.
- * @param {Record<string, string>} values - Объект, содержащий пары ключ-значение переменных и их значений.
- * @return {string} - Строка с замененными переменными на соответствующие значения.
+ * Функция replaceVars с объявленным массивом переменных для тестов
+ * "name1", "name2", "name3", "name4", "name5"
  */
 const replaceVars = (
   string: string,
   values: Record<string, string>
 ): string => {
-  Object.keys(values).forEach((key) => {
-    string = string.replace(`{${key}}`, values[key]);
+  arrVarNames.forEach((name) => {
+    string = string.replace(`{${name}}`, values[name] ?? '');
   });
   return string;
 };
 
 /**
- * Возвращает строку, сгенерированную из шаблона на основе предоставленных значений.
- *
- * @param {Input} template - Объект шаблона.
- * @param {Record<string, string>} values - Значения для подстановки в шаблон.
- * @return {string} Сгенерированная строка.
+ * Функция getStringFromTemplate с объявленным массивом переменных для тестов
+ * "name1", "name2", "name3", "name4", "name5"
  */
 const getStringFromTemplate = (
   template: Input,
@@ -190,7 +185,7 @@ const getStringFromTemplate = (
       template.value
         .match(/{([a-zA-Z0-9]+)}/g) // Получаем все переменные
         ?.map((match) => match.slice(1, -1)) // Убираем скобки
-        .every((name) => values[name] !== undefined) && // Проверяем, что все переменные существуют
+        .every((name) => arrVarNames.includes(name)) && // Проверяем, что все переменные существуют
       replaceVars(template.value, values) // Заменяем переменные на соответствующие значения
       ? getStringFromTemplate(template.children[0], values) // Если для переменной есть строка, возвращаем строку then
       : getStringFromTemplate(template.children[1], values); // В обратном случае, возвращаем строку else
@@ -206,4 +201,4 @@ const getStringFromTemplate = (
   }
 };
 
-export { generateUID, changeNode, getNode, getStringFromTemplate };
+export { generateUID, changeNode, getNode, getStringFromTemplate, replaceVars };

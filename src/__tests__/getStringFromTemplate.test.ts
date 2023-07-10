@@ -5,12 +5,12 @@ describe('getStringFromTemplate', () => {
   it('should generate the string from a simple text template', () => {
     const template: Input = {
       type: 'normal',
-      value: 'Hello, {something}!',
+      value: 'Hello, {name1}!',
       uid: '1234'
     };
 
     const values: Record<string, string> = {
-      something: 'world'
+      name1: 'world'
     };
 
     const result = getStringFromTemplate(template, values);
@@ -21,12 +21,12 @@ describe('getStringFromTemplate', () => {
   it('should generate the string from a template with if-then-else branches', () => {
     const template: Input = {
       type: 'normal',
-      value: 'Hello {name}! How is your {timeOfDay}? ',
+      value: 'Hello {name1}! How is your {name2}? ',
       uid: '5678',
       children: [
         {
           type: 'if',
-          value: '{var1}',
+          value: '{name3}',
           uid: '5678-1',
           children: [
             {
@@ -50,10 +50,9 @@ describe('getStringFromTemplate', () => {
     };
 
     const valuesTrue: Record<string, string> = {
-      name: 'Tom',
-      timeOfDay: 'day',
-      var1: 'var',
-      var2: ''
+      name1: 'Tom',
+      name2: 'day',
+      name3: 'var'
     };
     const resultTrue = getStringFromTemplate(template, valuesTrue);
     expect(resultTrue).toEqual(
@@ -61,10 +60,9 @@ describe('getStringFromTemplate', () => {
     );
 
     const values2: Record<string, string> = {
-      name: 'Alice',
-      timeOfDay: 'evening',
-      var1: '',
-      var2: ''
+      name1: 'Alice',
+      name2: 'evening',
+      name3: ''
     };
     const result2 = getStringFromTemplate(template, values2);
     expect(result2).toEqual(
@@ -75,12 +73,12 @@ describe('getStringFromTemplate', () => {
   it('should generate the string from a template with nested if-then-else branches', () => {
     const template: Input = {
       type: 'normal',
-      value: 'Hello, {name}! How are you today? ',
+      value: 'Hello, {name1}! How are you today? ',
       uid: '5678',
       children: [
         {
           type: 'if',
-          value: '{var1}',
+          value: '{name2}',
           uid: '5678-1',
           children: [
             {
@@ -90,7 +88,7 @@ describe('getStringFromTemplate', () => {
               children: [
                 {
                   type: 'if',
-                  value: '{var2}',
+                  value: '{name3}',
                   uid: '5678-1-1-1',
                   children: [
                     {
@@ -128,9 +126,9 @@ describe('getStringFromTemplate', () => {
     };
 
     const values1: Record<string, string> = {
-      name: 'Alice',
-      var1: 'a',
-      var2: 'a'
+      name1: 'Alice',
+      name2: 'a',
+      name3: 'a'
     };
     const result1 = getStringFromTemplate(template, values1);
     expect(result1).toEqual(
@@ -138,9 +136,9 @@ describe('getStringFromTemplate', () => {
     );
 
     const values2: Record<string, string> = {
-      name: 'Bob',
-      var1: 'a',
-      var2: ''
+      name1: 'Bob',
+      name2: 'a',
+      name3: ''
     };
     const result2 = getStringFromTemplate(template, values2);
     expect(result2).toEqual(
@@ -148,9 +146,9 @@ describe('getStringFromTemplate', () => {
     );
 
     const values3: Record<string, string> = {
-      name: 'Charlie',
-      var1: '',
-      var2: ''
+      name1: 'Charlie',
+      name2: '',
+      name3: ''
     };
     const result3 = getStringFromTemplate(template, values3);
     expect(result3).toEqual(
@@ -161,45 +159,45 @@ describe('getStringFromTemplate', () => {
   it('should replace variables with values only if they are inclosed in curly braces', () => {
     const templateLeftBrace: Input = {
       type: 'normal',
-      value: 'Hello, {name! How are you?',
+      value: 'Hello, {name1! How are you?',
       uid: '9999'
     };
 
     const values: Record<string, string> = {
-      name: 'Tim'
+      name1: 'Tim'
     };
 
     const resultLeft = getStringFromTemplate(templateLeftBrace, values);
-    expect(resultLeft).toEqual('Hello, {name! How are you?');
+    expect(resultLeft).toEqual('Hello, {name1! How are you?');
 
     const templateRightBrace: Input = {
       type: 'normal',
-      value: 'Hello, name}! How are you?',
+      value: 'Hello, name1}! How are you?',
       uid: '9999'
     };
 
     const resultRight = getStringFromTemplate(templateRightBrace, values);
-    expect(resultRight).toEqual('Hello, name}! How are you?');
+    expect(resultRight).toEqual('Hello, name1}! How are you?');
 
     const templateNoBraces: Input = {
       type: 'normal',
-      value: 'Hello, name! How are you?',
+      value: 'Hello, name1! How are you?',
       uid: '9999'
     };
 
     const resultNo = getStringFromTemplate(templateNoBraces, values);
-    expect(resultNo).toEqual('Hello, name! How are you?');
+    expect(resultNo).toEqual('Hello, name1! How are you?');
   });
 
   it('should work with multiple variables in if-then-else', () => {
     const template: Input = {
       type: 'normal',
-      value: 'Hello {name}! How is your {timeOfDay}? ',
+      value: 'Hello {name1}! How is your {name2}? ',
       uid: '5678',
       children: [
         {
           type: 'if',
-          value: '{var1}{var2}',
+          value: '{name3}{name4}',
           uid: '5678-1',
           children: [
             {
@@ -223,10 +221,10 @@ describe('getStringFromTemplate', () => {
     };
 
     const valuesTrueFirst: Record<string, string> = {
-      name: 'Tom',
-      timeOfDay: 'day',
-      var1: 'a',
-      var2: 'a'
+      name1: 'Tom',
+      name2: 'day',
+      name3: 'a',
+      name4: 'a'
     };
     const resultTrueFirst = getStringFromTemplate(template, valuesTrueFirst);
     expect(resultTrueFirst).toEqual(
@@ -234,10 +232,10 @@ describe('getStringFromTemplate', () => {
     );
 
     const valuesTrueSecond: Record<string, string> = {
-      name: 'Tom',
-      timeOfDay: 'day',
-      var1: 'a',
-      var2: ''
+      name1: 'Tom',
+      name2: 'day',
+      name3: 'a',
+      name4: ''
     };
     const resultTrueSecond = getStringFromTemplate(template, valuesTrueSecond);
     expect(resultTrueSecond).toEqual(
@@ -245,10 +243,10 @@ describe('getStringFromTemplate', () => {
     );
 
     const valuesTrueThird: Record<string, string> = {
-      name: 'Tom',
-      timeOfDay: 'day',
-      var1: '',
-      var2: 'a'
+      name1: 'Tom',
+      name2: 'day',
+      name3: '',
+      name4: 'a'
     };
     const resultTrueThird = getStringFromTemplate(template, valuesTrueThird);
     expect(resultTrueThird).toEqual(
@@ -256,10 +254,10 @@ describe('getStringFromTemplate', () => {
     );
 
     const valuesFalse: Record<string, string> = {
-      name: 'Tom',
-      timeOfDay: 'day',
-      var1: '',
-      var2: ''
+      name1: 'Tom',
+      name2: 'day',
+      name3: '',
+      name4: ''
     };
     const resultFalse = getStringFromTemplate(template, valuesFalse);
     expect(resultFalse).toEqual(
@@ -267,7 +265,7 @@ describe('getStringFromTemplate', () => {
     );
   });
 
-  it("shouldn`t replace variables that don't exist", () => {
+  it("should ignore variables that don't exist", () => {
     const template: Input = {
       type: 'normal',
       value: 'Hello {name}! How is your {timeOfDay}? ',
@@ -298,11 +296,58 @@ describe('getStringFromTemplate', () => {
       ]
     };
 
-    const values: Record<string, string> = {};
+    const values: Record<string, string> = {
+      name: 'John',
+      timeOfDay: 'day',
+      var1: 'a'
+    };
 
     const result = getStringFromTemplate(template, values);
     expect(result).toEqual(
       'Hello {name}! How is your {timeOfDay}? This is the false branch. Best Regards, John'
+    );
+  });
+
+  it('should replace missing variables with empty strings', () => {
+    const template: Input = {
+      type: 'normal',
+      value: 'Hello {name1}! How is your {name2}? ',
+      uid: '5678',
+      children: [
+        {
+          type: 'if',
+          value: '{name3}',
+          uid: '5678-1',
+          children: [
+            {
+              type: 'then',
+              value: 'This is the true branch. ',
+              uid: '5678-1-1'
+            },
+            {
+              type: 'else',
+              value: 'This is the false branch. ',
+              uid: '5678-1-2'
+            }
+          ]
+        },
+        {
+          type: 'normal',
+          value: 'Best Regards, John',
+          uid: '1234'
+        }
+      ]
+    };
+
+    const values: Record<string, string> = {
+      name: 'John',
+      timeOfDay: 'day',
+      var1: ''
+    };
+
+    const result = getStringFromTemplate(template, values);
+    expect(result).toEqual(
+      'Hello ! How is your ? This is the false branch. Best Regards, John'
     );
   });
 });

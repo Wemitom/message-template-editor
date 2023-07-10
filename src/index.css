@@ -29,4 +29,17 @@ code {
   cursor: pointer;
   border-radius: 2rem;
   min-width: 200px;
+  transition: 0.2s ease-in-out background-color;
+}
+
+textarea {
+  line-height: 1.5;
+  resize: none;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem;
+  background-color: #1e1e1e;
+  color: #fff;
+  border-radius: 0.5rem;
+  transition: 0.2s ease-in-out background-color;
 }

@@ -188,6 +188,10 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
 
   const [showPreview, setShowPreview] = useState(false);
 
+  const [savingStatus, setSavingStatus] = useState<
+    'none' | 'saving' | 'success'
+  >('none');
+
   return (
     <div className={styles.container}>
       <h1 style={{ textAlign: 'center' }}>Message Template Editor</h1>
@@ -228,6 +232,7 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
       <span style={{ display: 'flex', justifyContent: 'center' }}>
         <button
           className={styles.btnIfThenElse}
+          disabled={lastPosition.input.type === 'if'}
           onClick={() => {
             addIfThenElse(
               lastPosition.input,
@@ -272,9 +277,27 @@ const Editor = ({ arrVarNames, template, callbackSave }: EditorProps) => {
         </button>
         <button
           className={`${styles.saveBtn} btn`}
-          onClick={() => callbackSave(state)}
+          disabled={savingStatus === 'saving'}
+          onClick={async () => {
+            setSavingStatus('saving');
+            await callbackSave(state);
+            setSavingStatus('success');
+
+            setTimeout(() => {
+              setSavingStatus('none');
+            }, 1000);
+          }}
         >
-          Save
+          {savingStatus === 'saving' ? (
+            <div className={styles.spinnerContainer}>
+              <span className={styles.spinner} />
+              Saving...
+            </div>
+          ) : savingStatus === 'none' ? (
+            'Save'
+          ) : (
+            'Saved!'
+          )}
         </button>
       </div>
 

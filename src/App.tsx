@@ -30,9 +30,12 @@ function App() {
             localStorage.template ? JSON.parse(localStorage.template) : null
           }
           callbackSave={async (template) => {
-            setTimeout(() => {
-              localStorage.setItem('template', JSON.stringify(template));
-            }, 1000);
+            return new Promise<void>((resolve) => {
+              setTimeout(() => {
+                localStorage.setItem('template', JSON.stringify(template));
+                resolve();
+              }, 1000);
+            });
           }}
         />
         <div className={styles.closeBtnContainer}>

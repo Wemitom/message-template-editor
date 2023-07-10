@@ -17,7 +17,6 @@ const Inputs = () => {
     lastPosition,
     setLastPosition
   } = useTemplate();
-
   /**
    * Возвращает компонент, представляющий поле для ввода на основе его типа.
    *
@@ -35,19 +34,49 @@ const Inputs = () => {
                 className={styles.deleteBtn}
                 onClick={() => {
                   removeIfThenElse(input, (newState) => {
+                    /**
+                     * Проверяем на условия, которые могут повлияет на положение курсора
+                     */
                     const isChildOfDeletedIf = !!getNode(input, {
+                      // Если узел является дочерним узлом удаляемого условия
                       child: lastPosition.input
                     });
-                    const isMergedInput =
-                      !!getNode(getNode(template, { child: input }), {
+                    const isMerged = !!getNode(
+                      // Если узел сольется с родительским узлом
+                      getNode(template, { child: input }),
+                      {
                         child: lastPosition.input
-                      }) ||
+                      }
+                    );
+                    const isMergedParent = // Если узел является родительским узлом
                       getNode(template, { child: input })?.uid ===
-                        lastPosition.input.uid;
+                      lastPosition.input.uid;
 
-                    if (isChildOfDeletedIf || isMergedInput) {
-                      setLastPosition({ input: newState, position: 0 });
-                    }
+                    if (isChildOfDeletedIf)
+                      setLastPosition({
+                        input: newState, // Ставим в начало
+                        position: 0
+                      });
+                    else if (isMerged)
+                      setLastPosition({
+                        input:
+                          getNode(newState, {
+                            // Устнавливаем в родительский узел
+                            uid:
+                              getNode(template, { child: input })?.uid ??
+                              template.uid
+                          }) ?? newState,
+                        position: 0
+                      });
+                    else if (isMergedParent)
+                      setLastPosition({
+                        input:
+                          getNode(newState, {
+                            // Меняем на актуальный узел
+                            uid: lastPosition.input.uid
+                          }) ?? newState,
+                        position: 0
+                      });
                   });
                 }}
               >
@@ -58,6 +87,11 @@ const Inputs = () => {
         )}
         <TextareaAutosize
           className={styles.textarea}
+          style={
+            input.uid === lastPosition.input.uid
+              ? { boxShadow: '0 0 0 2px goldenrod, 0 0 8px goldenrod' }
+              : {}
+          }
           value={input.value}
           onChange={(e) => changeValue(input, input.uid, e.target.value)}
           onClick={(e) =>

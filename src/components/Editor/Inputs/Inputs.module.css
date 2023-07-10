@@ -1,14 +1,11 @@
-.textarea {
-  width: 100%;
-  min-height: 3rem;
-  padding: 0.5rem;
-  background-color: #1e1e1e;
-  color: #fff;
-  border-radius: 0.5rem;
-}
-
 @keyframes fade-in {
   from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
     opacity: 0;
   }
 }
@@ -20,6 +17,10 @@
   gap: 1rem;
   margin-top: 2rem;
   animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.conditional.leave {
+  animation: fade-out 0.5s ease-in-out forwards;
 }
 
 .inputs {
@@ -47,4 +48,8 @@
 
 .deleteBtn:active {
   background-color: #d21d1d;
+}
+
+.textarea {
+  transition: 0.2s ease-in-out box-shadow;
 }

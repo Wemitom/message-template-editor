@@ -13,6 +13,7 @@
   color: #03ae03;
   border-radius: 2rem;
   text-transform: uppercase;
+  transition: 0.2s ease-in-out color;
 }
 
 .btnIfThenElse:hover {
@@ -21,6 +22,12 @@
 
 .btnIfThenElse:active {
   background-color: #363636;
+}
+
+.btnIfThenElse:disabled {
+  background-color: #363636;
+  color: grey;
+  cursor: not-allowed;
 }
 
 .btns {
@@ -54,6 +61,38 @@
 .saveBtn:active {
   background-color: #0f8a0f;
 }
+
+.saveBtn:disabled {
+  background-color: #064406;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row;
+}
 /*                             */
 
 /* Стили для компонента Variables */
@@ -81,5 +120,14 @@
   color: #03ae03;
   border-radius: 0.5rem;
   cursor: pointer;
+  transition: 0.2s ease-in-out background-color;
+}
+
+.variable:hover {
+  background-color: rgb(69, 69, 69, 0.8);
+}
+
+.variable:active {
+  background-color: #363636;
 }
 /*                                 */

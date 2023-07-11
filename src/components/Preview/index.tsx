@@ -34,13 +34,22 @@ const Preview = ({ arrVarNames, template }: PreviewProps) => {
   const replaceVars = (
     string: string,
     values: Record<string, string>
-  ): string => {
-    arrVarNames.forEach((name) => {
-      const regex = new RegExp(`{${name}}`, 'g');
-      string = string.replace(regex, values[name] ?? '');
-    });
-    return string;
-  };
+  ): string =>
+    string
+      .split(/({[^{}]+})/) // Получаем все значение в скобках
+      .filter(Boolean)
+      .map((str) => {
+        const value = str.slice(1, -1);
+        /**
+         * Если переменная существует
+         */
+        if (arrVarNames.includes(value)) {
+          return values[value] ?? ''; // Заменяем на значение
+        } else {
+          return str; // В противном случае, возвращаем строку
+        }
+      })
+      .join('');
 
   /**
    * Возвращает строку, сгенерированную из шаблона на основе предоставленных значений.

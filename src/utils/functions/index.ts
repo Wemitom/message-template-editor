@@ -157,16 +157,18 @@ const arrVarNames = ['name1', 'name2', 'name3', 'name4', 'name5'];
  * Функция replaceVars с объявленным массивом переменных для тестов
  * "name1", "name2", "name3", "name4", "name5"
  */
-const replaceVars = (
-  string: string,
-  values: Record<string, string>
-): string => {
-  arrVarNames.forEach((name) => {
-    const regex = new RegExp(`{${name}}`, 'g');
-    string = string.replace(regex, values[name] ?? '');
-  });
-  return string;
-};
+const replaceVars = (string: string, values: Record<string, string>): string =>
+  string
+    .split(/({[^{}]+})/)
+    .filter(Boolean)
+    .map((str) => {
+      if (arrVarNames.includes(str.slice(1, -1))) {
+        return values[str.slice(1, -1)] ?? '';
+      } else {
+        return str;
+      }
+    })
+    .join('');
 
 /**
  * Функция getStringFromTemplate с объявленным массивом переменных для тестов

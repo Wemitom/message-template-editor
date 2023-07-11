@@ -350,4 +350,27 @@ describe('getStringFromTemplate', () => {
       'Hello ! How is your ? This is the false branch. Best Regards, John'
     );
   });
+
+  it('should ignore if variable is replaced with name of another variable', () => {
+    const template: Input = {
+      type: 'normal',
+      value: '{name1}, {name2}!',
+      uid: '1234'
+    };
+
+    const valuesFirst: Record<string, string> = {
+      name1: '{name1}',
+      name2: 'world'
+    };
+
+    const resultFirst = getStringFromTemplate(template, valuesFirst);
+    expect(resultFirst).toEqual('{name1}, world!');
+
+    const valuesSecond: Record<string, string> = {
+      name1: 'Hello',
+      name2: '{name1}'
+    };
+    const resultSecond = getStringFromTemplate(template, valuesSecond);
+    expect(resultSecond).toEqual('Hello, {name1}!');
+  });
 });

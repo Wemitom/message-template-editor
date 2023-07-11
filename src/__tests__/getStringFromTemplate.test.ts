@@ -299,12 +299,12 @@ describe('getStringFromTemplate', () => {
     const values: Record<string, string> = {
       name: 'John',
       timeOfDay: 'day',
-      var1: 'a'
+      var1: ''
     };
 
     const result = getStringFromTemplate(template, values);
     expect(result).toEqual(
-      'Hello {name}! How is your {timeOfDay}? This is the false branch. Best Regards, John'
+      'Hello {name}! How is your {timeOfDay}? This is the true branch. Best Regards, John'
     );
   });
 

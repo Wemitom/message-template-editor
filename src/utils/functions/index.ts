@@ -179,17 +179,7 @@ const getStringFromTemplate = (
   values: Record<string, string>
 ): string => {
   if (template.type === 'if') {
-    /**
-     * Regex на проверку того, что строка будет содержать только переменные
-     */
-    const onlyVarsRegex = /^{[a-zA-Z0-9]+}(?:{[a-zA-Z0-9]+})*$/;
-
-    return onlyVarsRegex.test(template.value) && // Если строка содержит только переменные
-      template.value
-        .match(/{([a-zA-Z0-9]+)}/g) // Получаем все переменные
-        ?.map((match) => match.slice(1, -1)) // Убираем скобки
-        .every((name) => arrVarNames.includes(name)) && // Проверяем, что все переменные существуют
-      replaceVars(template.value, values) // Заменяем переменные на соответствующие значения
+    return replaceVars(template.value, values) // Заменяем переменные на соответствующие значения
       ? getStringFromTemplate(template.children[0], values) // Если для переменной есть строка, возвращаем строку then
       : getStringFromTemplate(template.children[1], values); // В обратном случае, возвращаем строку else
   } else {
@@ -198,7 +188,7 @@ const getStringFromTemplate = (
       replaceVars(template.value, values) +
       (template.children
         ? getStringFromTemplate(template.children[0], values) + // Если есть дочерние узлы, рекурсивно получаем строку для инпута if
-          getStringFromTemplate(template.children[1], values) // и для инпута else
+          getStringFromTemplate(template.children[1], values) // и для второй части
         : '')
     );
   }
